@@ -30,6 +30,16 @@ export async function prDiff(owner: string, repo: string, number: number, exec: 
   return exec('gh', ['pr', 'diff', String(number), '-R', `${owner}/${repo}`]);
 }
 
-export async function shallowClone(owner: string, repo: string, branch: string, dest: string, exec: Exec = realExec): Promise<void> {
-  await exec('gh', ['repo', 'clone', `${owner}/${repo}`, dest, '--', '--depth', '1', '--branch', branch]);
+/**
+ * Prépare l'arbre de travail d'une PR dans `dest`.
+ *
+ * On ne clone jamais par nom de branche : la branche d'une PR mergée est
+ * souvent supprimée, et celle d'une PR venant d'un fork n'existe pas dans ce
+ * dépôt. La référence `refs/pull/<n>/head`, elle, est conservée par GitHub
+ * dans les deux cas.
+ */
+export async function clonePrHead(owner: string, repo: string, number: number, dest: string, exec: Exec = realExec): Promise<void> {
+  await exec('gh', ['repo', 'clone', `${owner}/${repo}`, dest, '--', '--depth', '1']);
+  await exec('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', `pull/${number}/head`]);
+  await exec('git', ['-C', dest, 'checkout', '--detach', 'FETCH_HEAD']);
 }

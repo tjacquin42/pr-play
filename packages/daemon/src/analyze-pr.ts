@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { analyze, type ClaudeRunner, type Guide } from '@pr-play/engine';
-import { prDiff, prView, realExec, shallowClone, type Exec } from './github';
+import { clonePrHead, prDiff, prView, realExec, type Exec } from './github';
 
 export interface AnalyzeDeps {
   exec?: Exec;
@@ -15,7 +15,7 @@ export async function analyzePr(owner: string, repo: string, number: number, dep
   const diff = await prDiff(owner, repo, number, exec);
   const dir = await mkdtemp(join(tmpdir(), 'pr-play-clone-'));
   try {
-    await shallowClone(owner, repo, meta.headRefName, dir, exec);
+    await clonePrHead(owner, repo, number, dir, exec);
     return await analyze({
       repoDir: dir,
       diff,

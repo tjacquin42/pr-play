@@ -1,0 +1,13 @@
+{
+  "name": "@pr-guide/daemon",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js"
+  },
+  "dependencies": { "@pr-guide/engine": "workspace:*" },
+  "devDependencies": { "typescript": "^5.6.0", "vitest": "^2.1.0", "@types/node": "^22.0.0" }
+}

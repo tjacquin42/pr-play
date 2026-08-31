@@ -5,6 +5,7 @@ const BADGE_LABELS: Record<SymbolEntry['testStatus'], string> = {
   'tested-in-pr': 'Testé dans la PR',
   'tested-elsewhere': 'Testé (test existant)',
   untested: 'Non testé',
+  'is-test': 'Ceci est un test',
 };
 
 function el(doc: Document, tag: string, className: string, text?: string): HTMLElement {
@@ -51,15 +52,22 @@ function renderSymbol(doc: Document, s: SymbolEntry, prUrl: string): HTMLElement
   header.appendChild(link);
   card.appendChild(header);
 
-  const cols = el(doc, 'div', 'prg-columns');
+  // Un symbole de test n'a pas de vis-à-vis : il occupe toute la largeur.
+  const isTest = s.testStatus === 'is-test';
+  const cols = el(doc, 'div', isTest ? 'prg-columns prg-columns-single' : 'prg-columns');
 
   const code = el(doc, 'section', 'prg-code');
   const codeHead = el(doc, 'div', 'prg-col-head');
-  codeHead.appendChild(el(doc, 'span', 'prg-col-title', 'Le code'));
+  codeHead.appendChild(el(doc, 'span', 'prg-col-title', isTest ? 'Le test' : 'Le code'));
   codeHead.appendChild(el(doc, 'span', 'prg-col-file', s.file));
   code.appendChild(codeHead);
   code.appendChild(renderDiff(doc, s.diff));
   cols.appendChild(code);
+
+  if (isTest) {
+    card.appendChild(cols);
+    return withCallers(doc, card, s);
+  }
 
   const test = el(doc, 'section', 'prg-test');
   const testHead = el(doc, 'div', 'prg-col-head');
@@ -77,6 +85,10 @@ function renderSymbol(doc: Document, s: SymbolEntry, prUrl: string): HTMLElement
   cols.appendChild(test);
   card.appendChild(cols);
 
+  return withCallers(doc, card, s);
+}
+
+function withCallers(doc: Document, card: HTMLElement, s: SymbolEntry): HTMLElement {
   if (s.callers.length > 0) {
     const box = el(doc, 'div', 'prg-callers', 'Impact — appelé par : ');
     box.appendChild(el(doc, 'span', 'prg-callers-list',

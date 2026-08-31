@@ -12,8 +12,11 @@
 .prg-badge-tested-in-pr { background: #dafbe1; color: #116329; }
 .prg-badge-tested-elsewhere { background: #fff8c5; color: #7d4e00; }
 .prg-badge-untested { background: #ffebe9; color: #a40e26; }
+.prg-badge-is-test { background: #ddf4ff; color: #0550ae; }
 .prg-pr-link { margin-left: auto; font-size: 12px; }
 .prg-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.prg-columns-single { grid-template-columns: 1fr; }
+.prg-columns-single .prg-code { border-right: none; }
 .prg-code { border-right: 1px solid #30363d; min-width: 0; background: #1f2430; }
 .prg-test { min-width: 0; }
 .prg-test { background: #1f2430; }

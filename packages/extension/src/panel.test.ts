@@ -60,4 +60,24 @@ describe('renderGuide', () => {
     // Le texte de la ligne reste intact une fois recomposé.
     expect(added.textContent).toContain('if (!validateSiret(siret)) {');
   });
+
+  it('un symbole de test occupe toute la largeur, sans vis-à-vis', () => {
+    const testSymbol: Guide = {
+      ...guide,
+      chapters: [{ title: 'Tests', intent: '', symbolIds: ['test/persist.test.ts#sauvegarde'] }],
+      symbols: [{
+        ...guide.symbols[0]!,
+        id: 'test/persist.test.ts#sauvegarde',
+        name: 'sauvegarde',
+        file: 'test/persist.test.ts',
+        testStatus: 'is-test',
+        testRef: undefined,
+      }],
+    };
+    const r = renderGuide(testSymbol, document);
+    expect(r.querySelector('.prg-columns-single')).not.toBeNull();
+    expect(r.querySelector('.prg-test')).toBeNull();
+    expect(r.querySelector('.prg-col-title')!.textContent).toBe('Le test');
+    expect(r.querySelector('.prg-badge-is-test')!.textContent).toBe('Ceci est un test');
+  });
 });

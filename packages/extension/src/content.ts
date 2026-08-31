@@ -24,8 +24,8 @@ function openPanel(guide: Guide): void {
   document.body.appendChild(panel);
   setAction('✕ Fermer le guide');
   const untested = guide.symbols.filter((s) => s.testStatus === 'untested').length;
-  setStatus(`${guide.chapters.length} chapitres · ${guide.symbols.length} symboles · ${untested} non testés`);
-  log('info', `guide affiché (chapitres ${guide.chaptersSource}, ${guide.symbols.length} symboles)`);
+  const code = guide.symbols.filter((s) => s.testStatus !== 'is-test').length;
+  setStatus(`${guide.chapters.length} chapitres · ${code} symboles de code · ${untested} non testés`);
 }
 
 async function pollGuide(owner: string, repo: string, number: number): Promise<void> {

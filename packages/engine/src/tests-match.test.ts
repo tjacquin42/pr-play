@@ -48,3 +48,17 @@ describe('portion de test affichée en vis-à-vis', () => {
     expect(ref.diff).not.toContain('diff --git');
   });
 });
+
+describe('un symbole de test n’est pas apparié à lui-même', () => {
+  const repoDir = fixtureRepoDir();
+  const project = openProject(repoDir);
+  const { kept } = splitNoise(parseUnifiedDiff(fixtureDiff()));
+
+  it('classe les symboles des fichiers de test en « is-test », sans référence', () => {
+    const testFile = kept.find((f) => f.path === 'src/server/invoices.test.ts')!;
+    const syms = extractSymbols(project, repoDir, testFile);
+    const result = testStatusFor(syms.find((s) => s.name === 'testCreateInvoice')!, kept, project, repoDir);
+    expect(result.status).toBe('is-test');
+    expect(result.ref).toBeUndefined();
+  });
+});

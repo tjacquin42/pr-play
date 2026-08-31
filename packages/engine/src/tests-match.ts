@@ -21,6 +21,10 @@ export function testStatusFor(
   project: Project,
   repoDir: string,
 ): { status: TestStatus; ref?: TestRef } {
+  // Un symbole défini dans un fichier de test EST un test : l'apparier
+  // reviendrait à l'afficher en vis-à-vis de lui-même.
+  if (isTestFile(symbol.file)) return { status: 'is-test' };
+
   // 1. Un fichier de test de la PR mentionne le symbole ?
   for (const f of changedFiles) {
     if (isTestFile(f.path) && mentions(f.diffText, symbol.name)) {

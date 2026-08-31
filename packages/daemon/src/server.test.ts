@@ -63,4 +63,34 @@ describe('serveur HTTP', () => {
     expect((await fetch(`${base}/guide/x/y/1`)).status).toBe(404);
     server.close();
   });
+
+  it('deux POST /analyze simultanés sur la même clé → un seul appel à analyze', async () => {
+    let calls = 0;
+    let resolveJob!: () => void;
+    const jobDone = new Promise<void>((r) => { resolveJob = r; });
+    const server = createServer({
+      store: new GuideStore(dir),
+      analyze: async () => { calls += 1; await jobDone; return guide; },
+    });
+    const base = await listen(server);
+
+    const post = (): Promise<Response> => fetch(`${base}/analyze`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ owner: 'concurrent', repo: 'r', number: 42 }),
+    });
+
+    const [a, b] = await Promise.all([post(), post()]);
+    const [statusA, statusB] = await Promise.all([
+      (await a.json()) as { status: string },
+      (await b.json()) as { status: string },
+    ]);
+
+    expect(calls).toBe(1);
+    expect(['started', 'running']).toContain(statusA.status);
+    expect(['started', 'running']).toContain(statusB.status);
+
+    resolveJob();
+    await new Promise((r) => setTimeout(r, 50));
+    server.close();
+  });
 });

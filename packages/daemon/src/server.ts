@@ -51,8 +51,12 @@ export function createServer(deps: Deps): http.Server {
         }
         const key = `${owner}/${repo}/${number}`;
         if (jobs.get(key)?.status === 'running') { send(res, 200, { status: 'running' }); return; }
-        if (force !== true && (await deps.store.load(owner, repo, number))) { send(res, 200, { status: 'cached' }); return; }
         jobs.set(key, { status: 'running' });
+        if (force !== true && (await deps.store.load(owner, repo, number))) {
+          jobs.delete(key);
+          send(res, 200, { status: 'cached' });
+          return;
+        }
         void deps.analyze(owner, repo, number)
           .then(async (guide) => { await deps.store.save(guide); jobs.delete(key); })
           .catch((err: unknown) => {

@@ -41,4 +41,17 @@ describe('parseUnifiedDiff', () => {
     expect(slice).toContain('return 2;');
     expect(slice).not.toContain('function b');
   });
+
+  it('fichier neuf vide : isNew vrai, isRenameOnly faux (pas de faux renommage)', () => {
+    const NEW_EMPTY_FILE_DIFF = `diff --git a/empty.ts b/empty.ts
+new file mode 100644
+index 000000..000000
+--- /dev/null
++++ b/empty.ts
+`;
+    const files = parseUnifiedDiff(NEW_EMPTY_FILE_DIFF);
+    const f = files[0]!;
+    expect(f.isNew).toBe(true);
+    expect(f.isRenameOnly).toBe(false);
+  });
 });

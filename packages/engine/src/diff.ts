@@ -32,7 +32,7 @@ export function parseUnifiedDiff(diff: string): ChangedFile[] {
       path,
       isNew: f.from === '/dev/null',
       isDeleted: f.to === '/dev/null',
-      isRenameOnly: f.chunks.length === 0 && f.from !== f.to,
+      isRenameOnly: f.chunks.length === 0 && f.from !== f.to && f.from !== '/dev/null' && f.to !== '/dev/null',
       changedLines: chunks.flatMap((c) => c.changedLines),
       diffText: rawParts[i] ?? '',
     };

@@ -25,6 +25,7 @@ async function pollGuide(owner: string, repo: string, number: number): Promise<v
   for (let i = 0; i < 120; i += 1) {
     const { status, body } = await fetchGuide(owner, repo, number);
     if (status === 200 && validateGuide(body)) { togglePanel(body); return; }
+    if (status === 0) { setLabel('Guide hors ligne'); return; }
     const s = body as { status?: string; message?: string } | undefined;
     if (s?.status === 'error') { setLabel(`Erreur : ${s.message ?? 'analyse échouée'}`); return; }
     setLabel('Analyse en cours…', true);
@@ -36,6 +37,7 @@ async function pollGuide(owner: string, repo: string, number: number): Promise<v
 async function onClick(): Promise<void> {
   const pr = prFromUrl();
   if (!pr) return;
+  if (!(await daemonStatus())) { setLabel('Guide hors ligne'); return; }
   if (panel) { togglePanel({} as Guide); return; } // fermer
   const { status, body } = await fetchGuide(pr.owner, pr.repo, pr.number);
   if (status === 200 && validateGuide(body)) { togglePanel(body); return; }

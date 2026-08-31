@@ -1,6 +1,6 @@
 import { relative } from 'node:path';
 import type { Project } from 'ts-morph';
-import type { ChangedFile } from './diff';
+import { sliceDiffByMention, type ChangedFile } from './diff';
 import type { RawSymbol } from './symbols';
 import type { TestRef, TestStatus } from './types';
 
@@ -24,7 +24,8 @@ export function testStatusFor(
   // 1. Un fichier de test de la PR mentionne le symbole ?
   for (const f of changedFiles) {
     if (isTestFile(f.path) && mentions(f.diffText, symbol.name)) {
-      return { status: 'tested-in-pr', ref: { file: f.path, diff: f.diffText } };
+      const portion = sliceDiffByMention(f, symbol.name);
+      return { status: 'tested-in-pr', ref: { file: f.path, diff: portion || f.diffText } };
     }
   }
   // 2. Un fichier de test du repo (hors PR) le mentionne ?

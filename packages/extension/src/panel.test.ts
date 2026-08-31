@@ -33,6 +33,8 @@ describe('renderGuide', () => {
   it('affiche le test en vis-à-vis et les appelants', () => {
     const card = root.querySelector('.prg-symbol')!;
     expect(card.querySelector('.prg-test')!.textContent).toContain('invoices.test.ts');
+    const titles = Array.from(card.querySelectorAll('.prg-col-title'), (n) => n.textContent);
+    expect(titles).toEqual(['Le code', 'Son test']);
     expect(card.querySelector('.prg-callers')!.textContent).toContain('monthlyReport');
   });
   it('affiche « non testé » quand testRef est absent', () => {
@@ -42,7 +44,8 @@ describe('renderGuide', () => {
       symbols: [{ ...guide.symbols[0]!, testStatus: 'untested', testRef: undefined }],
     };
     const r = renderGuide(untested, document);
-    expect(r.querySelector('.prg-test')!.textContent).toContain('Non testé');
+    expect(r.querySelector('.prg-test')!.textContent).toContain('Aucun test ne mentionne ce symbole.');
+    expect(r.querySelector('.prg-col-file')!.textContent).toBe('src/server/invoices.ts');
   });
   it('replie le bruit', () => {
     expect(root.querySelector('.prg-noise')!.textContent).toContain('pnpm-lock.yaml');

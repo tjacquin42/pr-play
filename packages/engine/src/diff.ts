@@ -46,3 +46,18 @@ export function sliceDiff(file: ChangedFile, startLine: number, endLine: number)
   const kept = chunks.filter((c) => c.changedLines.some((l) => l >= startLine && l <= endLine));
   return kept.map((c) => c.lines.join('\n')).join('\n');
 }
+
+/**
+ * Ne garde du diff que les hunks qui citent `name`.
+ *
+ * Sert à n'afficher, en vis-à-vis d'un symbole, que la portion du fichier de
+ * test qui le concerne — et non le diff entier du fichier, répété à
+ * l'identique pour chaque symbole que ce fichier couvre.
+ */
+export function sliceDiffByMention(file: ChangedFile, name: string): string {
+  const chunks = chunkCache.get(file) ?? [];
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const mention = new RegExp(`\\b${escaped}\\b`);
+  const kept = chunks.filter((c) => c.lines.some((l) => mention.test(l)));
+  return kept.map((c) => c.lines.join('\n')).join('\n');
+}

@@ -52,16 +52,27 @@ function renderSymbol(doc: Document, s: SymbolEntry, prUrl: string): HTMLElement
   card.appendChild(header);
 
   const cols = el(doc, 'div', 'prg-columns');
+
   const code = el(doc, 'section', 'prg-code');
+  const codeHead = el(doc, 'div', 'prg-col-head');
+  codeHead.appendChild(el(doc, 'span', 'prg-col-title', 'Le code'));
+  codeHead.appendChild(el(doc, 'span', 'prg-col-file', s.file));
+  code.appendChild(codeHead);
   code.appendChild(renderDiff(doc, s.diff));
   cols.appendChild(code);
 
   const test = el(doc, 'section', 'prg-test');
-  if (s.testRef) {
-    test.appendChild(el(doc, 'div', 'prg-test-file', s.testRef.file));
-    if (s.testRef.diff) test.appendChild(renderDiff(doc, s.testRef.diff));
+  const testHead = el(doc, 'div', 'prg-col-head');
+  testHead.appendChild(el(doc, 'span', 'prg-col-title', 'Son test'));
+  testHead.appendChild(el(doc, 'span', 'prg-col-file', s.testRef?.file ?? 'aucun'));
+  test.appendChild(testHead);
+  if (s.testRef?.diff) {
+    test.appendChild(renderDiff(doc, s.testRef.diff));
+  } else if (s.testRef) {
+    // Test préexistant, hors du diff de la PR : on ne peut montrer que sa piste.
+    test.appendChild(el(doc, 'div', 'prg-test-note', 'Test déjà en place, non modifié par cette PR.'));
   } else {
-    test.appendChild(el(doc, 'div', 'prg-test-missing', 'Non testé'));
+    test.appendChild(el(doc, 'div', 'prg-test-missing', 'Aucun test ne mentionne ce symbole.'));
   }
   cols.appendChild(test);
   card.appendChild(cols);

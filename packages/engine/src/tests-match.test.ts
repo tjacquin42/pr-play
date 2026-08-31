@@ -30,3 +30,21 @@ describe('testStatusFor', () => {
     expect(testStatusFor(v, kept, project, repoDir).status).toBe('untested');
   });
 });
+
+describe('portion de test affichée en vis-à-vis', () => {
+  const repoDir = fixtureRepoDir();
+  const project = openProject(repoDir);
+  const { kept } = splitNoise(parseUnifiedDiff(fixtureDiff()));
+  const invoices = kept.find((f) => f.path === 'src/server/invoices.ts')!;
+  const syms = extractSymbols(project, repoDir, invoices);
+
+  it('ne garde du fichier de test que les hunks citant le symbole', () => {
+    const create = syms.find((s) => s.name === 'createInvoice')!;
+    const testFile = kept.find((f) => f.path === 'src/server/invoices.test.ts')!;
+    const ref = testStatusFor(create, kept, project, repoDir).ref!;
+    expect(ref.diff).toContain('createInvoice');
+    // Plus court que le diff entier du fichier : l'en-tête `diff --git` a sauté.
+    expect(ref.diff!.length).toBeLessThan(testFile.diffText.length);
+    expect(ref.diff).not.toContain('diff --git');
+  });
+});

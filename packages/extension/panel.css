@@ -17,8 +17,11 @@
 .prg-code { border-right: 1px solid #30363d; min-width: 0; background: #1f2430; }
 .prg-test { min-width: 0; }
 .prg-test { background: #1f2430; }
-.prg-test-file { padding: 4px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #8b949e; background: #161b22; }
-.prg-test-missing { padding: 16px; color: #f85149; font-weight: 600; background: #1f2430; }
+.prg-col-head { display: flex; align-items: baseline; gap: 8px; padding: 4px 10px; background: #161b22; border-bottom: 1px solid #30363d; }
+.prg-col-title { font: 600 11px/1.4 -apple-system, sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #f0f6fc; }
+.prg-col-file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prg-test-note { padding: 12px; color: #8b949e; font-style: italic; background: #1f2430; }
+.prg-test-missing { padding: 12px; color: #f85149; font-weight: 600; background: #1f2430; }
 .prg-diff { margin: 0; padding: 8px 0; overflow-x: auto; font-size: 12px; background: #1f2430; color: #d4d4d4; }
 .prg-line { padding: 0 8px; white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .prg-line-add { background: rgba(63, 185, 80, .18); box-shadow: inset 2px 0 0 #3fb950; }

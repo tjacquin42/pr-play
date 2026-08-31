@@ -9,22 +9,35 @@ function prFromUrl(): { owner: string; repo: string; number: number } | undefine
 
 let panel: HTMLElement | undefined;
 let button: HTMLButtonElement | undefined;
+let currentPr: { owner: string; repo: string; number: number } | undefined;
 
 function setLabel(text: string, disabled = false): void {
   if (button) { button.textContent = text; button.disabled = disabled; }
 }
 
-function togglePanel(guide: Guide): void {
-  if (panel) { panel.remove(); panel = undefined; setLabel('📖 Guide'); return; }
+function closePanel(): void {
+  if (!panel) return;
+  panel.remove();
+  panel = undefined;
+  setLabel('📖 Guide');
+}
+
+function openPanel(guide: Guide): void {
+  closePanel();
   panel = renderGuide(guide, document);
   document.body.appendChild(panel);
   setLabel('✕ Fermer le guide');
 }
 
+function removeButton(): void {
+  button?.remove();
+  button = undefined;
+}
+
 async function pollGuide(owner: string, repo: string, number: number): Promise<void> {
   for (let i = 0; i < 120; i += 1) {
     const { status, body } = await fetchGuide(owner, repo, number);
-    if (status === 200 && validateGuide(body)) { togglePanel(body); return; }
+    if (status === 200 && validateGuide(body)) { openPanel(body); return; }
     if (status === 0) { setLabel('Guide hors ligne'); return; }
     const s = body as { status?: string; message?: string } | undefined;
     if (s?.status === 'error') { setLabel(`Erreur : ${s.message ?? 'analyse échouée'}`); return; }
@@ -38,15 +51,17 @@ async function onClick(): Promise<void> {
   const pr = prFromUrl();
   if (!pr) return;
   if (!(await daemonStatus())) { setLabel('Guide hors ligne'); return; }
-  if (panel) { togglePanel({} as Guide); return; } // fermer
+  if (panel) { closePanel(); return; }
   const { status, body } = await fetchGuide(pr.owner, pr.repo, pr.number);
-  if (status === 200 && validateGuide(body)) { togglePanel(body); return; }
+  if (status === 200 && validateGuide(body)) { openPanel(body); return; }
   await requestAnalyze(pr.owner, pr.repo, pr.number);
   await pollGuide(pr.owner, pr.repo, pr.number);
 }
 
 async function init(): Promise<void> {
-  if (!prFromUrl() || document.querySelector('.prg-button')) return;
+  const pr = prFromUrl();
+  if (!pr) return;
+  currentPr = pr;
   button = document.createElement('button');
   button.className = 'prg-button btn btn-sm';
   button.style.cssText = 'position:fixed;top:70px;right:16px;z-index:10000;';
@@ -55,7 +70,25 @@ async function init(): Promise<void> {
   setLabel((await daemonStatus()) ? '📖 Guide' : 'Guide hors ligne', false);
 }
 
+function handleNavigation(): void {
+  const pr = prFromUrl();
+  if (!pr) {
+    closePanel();
+    removeButton();
+    currentPr = undefined;
+    return;
+  }
+  const samePr = currentPr !== undefined
+    && currentPr.owner === pr.owner
+    && currentPr.repo === pr.repo
+    && currentPr.number === pr.number;
+  if (samePr) return;
+  closePanel();
+  removeButton();
+  void init();
+}
+
 void init();
-// GitHub navigue en SPA : ré-initialiser à chaque navigation.
-document.addEventListener('turbo:load', () => { void init(); });
-window.addEventListener('popstate', () => { void init(); });
+// GitHub navigue en SPA : nettoyer bouton/panneau puis ré-initialiser à chaque navigation.
+document.addEventListener('turbo:load', handleNavigation);
+window.addEventListener('popstate', handleNavigation);

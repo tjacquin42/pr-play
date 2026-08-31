@@ -10,11 +10,7 @@ interface Deps {
 type JobState = { status: 'running' } | { status: 'error'; message: string };
 
 function send(res: http.ServerResponse, code: number, body: unknown): void {
-  res.writeHead(code, {
-    'content-type': 'application/json',
-    'access-control-allow-origin': '*',
-    'access-control-allow-headers': 'content-type',
-  });
+  res.writeHead(code, { 'content-type': 'application/json' });
   res.end(JSON.stringify(body));
 }
 
@@ -31,11 +27,7 @@ export function createServer(deps: Deps): http.Server {
     void (async () => {
       const url = new URL(req.url ?? '/', 'http://localhost');
       if (req.method === 'OPTIONS') {
-        res.writeHead(204, {
-          'access-control-allow-origin': '*',
-          'access-control-allow-headers': 'content-type',
-          'access-control-allow-methods': 'GET,POST,OPTIONS',
-        });
+        res.writeHead(204);
         res.end();
         return;
       }

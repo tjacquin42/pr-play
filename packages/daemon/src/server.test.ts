@@ -57,6 +57,14 @@ describe('serveur HTTP', () => {
     server.close();
   });
 
+  it('status → aucun en-tête access-control (pas de CORS ouvert)', async () => {
+    const server = createServer({ store: new GuideStore(dir), analyze: async () => guide });
+    const base = await listen(server);
+    const res = await fetch(`${base}/status`);
+    expect(res.headers.get('access-control-allow-origin')).toBeNull();
+    server.close();
+  });
+
   it('guide inconnu → 404', async () => {
     const server = createServer({ store: new GuideStore(dir), analyze: async () => guide });
     const base = await listen(server);

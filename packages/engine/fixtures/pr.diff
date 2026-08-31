@@ -4,12 +4,12 @@ index 0000001..0000002 100644
 +++ b/src/server/invoices.ts
 @@ -1,9 +1,12 @@
  import type { Invoice } from '../shared/types';
-
+ 
  export function validateSiret(siret: string): boolean {
 -  return siret.length === 14;
 +  return /^\d{14}$/.test(siret);
  }
-
+ 
 -export function createInvoice(id: string, amount: number): Invoice {
 -  return { id, amount };
 +export function createInvoice(id: string, amount: number, siret: string): Invoice {
@@ -24,7 +24,7 @@ index 0000003..0000004 100644
 +++ b/src/server/invoices.test.ts
 @@ -1,6 +1,6 @@
  import { createInvoice } from './invoices';
-
+ 
  export function testCreateInvoice(): void {
 -  const invoice = createInvoice('f-1', 100);
 +  const invoice = createInvoice('f-1', 100, '12345678901234');

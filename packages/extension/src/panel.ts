@@ -1,4 +1,5 @@
 import type { Guide, SymbolEntry } from '@pr-play/engine/types';
+import { tokenizeLine } from './highlight';
 
 const BADGE_LABELS: Record<SymbolEntry['testStatus'], string> = {
   'tested-in-pr': 'Testé dans la PR',
@@ -15,9 +16,19 @@ function el(doc: Document, tag: string, className: string, text?: string): HTMLE
 
 function renderDiff(doc: Document, diff: string): HTMLElement {
   const pre = el(doc, 'pre', 'prg-diff');
+  let inBlockComment = false;
   for (const line of diff.split('\n')) {
     const cls = line.startsWith('+') ? 'prg-line-add' : line.startsWith('-') ? 'prg-line-del' : 'prg-line-ctx';
-    pre.appendChild(el(doc, 'div', `prg-line ${cls}`, line));
+    const row = el(doc, 'div', `prg-line ${cls}`);
+    const marker = /^[+\- ]/.test(line) ? line.slice(0, 1) : '';
+    const code = line.slice(marker.length);
+    if (marker) row.appendChild(el(doc, 'span', 'prg-marker', marker));
+    // L'état du commentaire de bloc traverse les lignes du hunk : sans lui, un
+    // /* … */ perdrait sa couleur dès sa deuxième ligne.
+    const { tokens, inBlockComment: next } = tokenizeLine(code, inBlockComment);
+    inBlockComment = next;
+    for (const token of tokens) row.appendChild(el(doc, 'span', `prg-t-${token.kind}`, token.text));
+    pre.appendChild(row);
   }
   return pre;
 }

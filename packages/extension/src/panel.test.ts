@@ -47,4 +47,14 @@ describe('renderGuide', () => {
   it('replie le bruit', () => {
     expect(root.querySelector('.prg-noise')!.textContent).toContain('pnpm-lock.yaml');
   });
+
+  it('colore le diff : marqueur séparé et jetons typés', () => {
+    const card = root.querySelector('.prg-symbol')!;
+    const added = card.querySelector('.prg-line-add')!;
+    expect(added.querySelector('.prg-marker')!.textContent).toBe('+');
+    expect(added.querySelector('.prg-t-control')!.textContent).toBe('if');
+    expect(added.querySelector('.prg-t-function')!.textContent).toBe('validateSiret');
+    // Le texte de la ligne reste intact une fois recomposé.
+    expect(added.textContent).toContain('if (!validateSiret(siret)) {');
+  });
 });

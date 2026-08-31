@@ -14,14 +14,30 @@
 .prg-badge-untested { background: #ffebe9; color: #a40e26; }
 .prg-pr-link { margin-left: auto; font-size: 12px; }
 .prg-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.prg-code { border-right: 1px solid #d1d9e0; min-width: 0; }
+.prg-code { border-right: 1px solid #30363d; min-width: 0; background: #1f2430; }
 .prg-test { min-width: 0; }
-.prg-test-file { padding: 4px 8px; font-family: monospace; font-size: 11px; color: #59636e; }
-.prg-test-missing { padding: 16px; color: #a40e26; font-weight: 600; }
-.prg-diff { margin: 0; padding: 8px 0; overflow-x: auto; font-size: 12px; }
-.prg-line { padding: 0 8px; white-space: pre; font-family: monospace; }
-.prg-line-add { background: #dafbe1; }
-.prg-line-del { background: #ffebe9; }
+.prg-test { background: #1f2430; }
+.prg-test-file { padding: 4px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #8b949e; background: #161b22; }
+.prg-test-missing { padding: 16px; color: #f85149; font-weight: 600; background: #1f2430; }
+.prg-diff { margin: 0; padding: 8px 0; overflow-x: auto; font-size: 12px; background: #1f2430; color: #d4d4d4; }
+.prg-line { padding: 0 8px; white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.prg-line-add { background: rgba(63, 185, 80, .18); box-shadow: inset 2px 0 0 #3fb950; }
+.prg-line-del { background: rgba(248, 81, 73, .16); box-shadow: inset 2px 0 0 #f85149; }
+.prg-marker { display: inline-block; width: 1ch; margin-right: 6px; color: #6e7681; }
+.prg-line-add .prg-marker { color: #3fb950; }
+.prg-line-del .prg-marker { color: #f85149; }
+
+/* Jetons — thème Dark+ de VS Code. */
+.prg-t-comment { color: #6a9955; font-style: italic; }
+.prg-t-string { color: #ce9178; }
+.prg-t-keyword { color: #569cd6; }
+.prg-t-control { color: #c586c0; }
+.prg-t-number { color: #b5cea8; }
+.prg-t-type { color: #4ec9b0; }
+.prg-t-function { color: #dcdcaa; }
+.prg-t-property { color: #9cdcfe; }
+.prg-t-operator { color: #d4d4d4; }
+.prg-t-plain { color: #d4d4d4; }
 .prg-callers { padding: 8px 12px; border-top: 1px solid #d1d9e0; background: #fff8c5; font-size: 12px; }
 .prg-noise { margin-top: 24px; color: #59636e; }
 .prg-noise-file { font-family: monospace; padding: 2px 8px; }

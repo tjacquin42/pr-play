@@ -1,0 +1,40 @@
+diff --git a/src/server/invoices.ts b/src/server/invoices.ts
+index 0000001..0000002 100644
+--- a/src/server/invoices.ts
++++ b/src/server/invoices.ts
+@@ -1,9 +1,12 @@
+ import type { Invoice } from '../shared/types';
+
+ export function validateSiret(siret: string): boolean {
+-  return siret.length === 14;
++  return /^\d{14}$/.test(siret);
+ }
+
+-export function createInvoice(id: string, amount: number): Invoice {
+-  return { id, amount };
++export function createInvoice(id: string, amount: number, siret: string): Invoice {
++  if (!validateSiret(siret)) {
++    throw new Error('SIRET invalide');
++  }
++  return { id, amount, siret };
+ }
+diff --git a/src/server/invoices.test.ts b/src/server/invoices.test.ts
+index 0000003..0000004 100644
+--- a/src/server/invoices.test.ts
++++ b/src/server/invoices.test.ts
+@@ -1,6 +1,6 @@
+ import { createInvoice } from './invoices';
+
+ export function testCreateInvoice(): void {
+-  const invoice = createInvoice('f-1', 100);
++  const invoice = createInvoice('f-1', 100, '12345678901234');
+   if (invoice.amount !== 100) throw new Error('échec');
+ }
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 0000005..0000006 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -1,2 +1,2 @@
+ lockfileVersion: '9.0'
+-# ancien
++# nouveau

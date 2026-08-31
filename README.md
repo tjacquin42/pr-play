@@ -65,6 +65,21 @@ Le démon purge automatiquement (au démarrage, puis toutes les 24 h) les guides
 associée est mergée depuis plus de **30 jours**, ainsi que les guides orphelins (PR ou repo
 introuvable).
 
+## Console de débogage
+
+Sur toute page de PR, une barre fixe s'affiche en haut : nom, état du démon,
+bouton d'action (Guide / Analyse en cours / Fermer), et deux boutons de journal.
+
+- **Journal** déplie l'historique des événements (requêtes, réponses inattendues,
+  erreurs) ; il se déplie tout seul dès qu'une erreur survient.
+- **Copier le journal** met tout dans le presse-papier — URL, navigateur et
+  lignes horodatées — pour le coller tel quel dans une conversation. Si le
+  navigateur refuse l'accès au presse-papier, le texte s'affiche dans une zone
+  sélectionnable.
+
+Les erreurs du pont vers le service worker (extension rechargée, worker endormi)
+et les exceptions non gérées de la page y sont capturées.
+
 ## Vérification manuelle
 
 Cette checklist n'est pas automatisable (elle dépend du DOM réel de GitHub) — à dérouler à

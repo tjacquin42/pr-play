@@ -1,4 +1,4 @@
-import type { Guide, SymbolEntry } from '@pr-guide/engine/types';
+import type { Guide, SymbolEntry } from '@pr-play/engine/types';
 
 const BADGE_LABELS: Record<SymbolEntry['testStatus'], string> = {
   'tested-in-pr': 'Testé dans la PR',

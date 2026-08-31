@@ -2,19 +2,19 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NODE="$(command -v node)"
-PLIST="$HOME/Library/LaunchAgents/com.tjacquin.pr-guide.plist"
+PLIST="$HOME/Library/LaunchAgents/com.tjacquin.pr-play.plist"
 # launchd ne charge pas le PATH du shell de connexion : le démon a besoin de
 # `gh` (Homebrew) et `claude` (nvm) pour analyser une PR, donc on propage le
 # PATH courant du script dans le plist.
 DAEMON_PATH="$PATH"
 
-pnpm -C "$ROOT" -F @pr-guide/daemon build
+pnpm -C "$ROOT" -F @pr-play/daemon build
 
 cat > "$PLIST" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>com.tjacquin.pr-guide</string>
+  <key>Label</key><string>com.tjacquin.pr-play</string>
   <key>ProgramArguments</key><array>
     <string>${NODE}</string>
     <string>${ROOT}/packages/daemon/dist/index.cjs</string>
@@ -24,11 +24,11 @@ cat > "$PLIST" <<EOF
   </dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
-  <key>StandardOutPath</key><string>/tmp/pr-guide.log</string>
-  <key>StandardErrorPath</key><string>/tmp/pr-guide.err</string>
+  <key>StandardOutPath</key><string>/tmp/pr-play.log</string>
+  <key>StandardErrorPath</key><string>/tmp/pr-play.err</string>
 </dict></plist>
 EOF
 
 launchctl bootout "gui/$(id -u)" "$PLIST" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
-echo "pr-guide : démon installé (logs : /tmp/pr-guide.log)"
+echo "pr-play : démon installé (logs : /tmp/pr-play.log)"

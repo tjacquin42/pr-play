@@ -1,5 +1,5 @@
 import http from 'node:http';
-import type { Guide } from '@pr-guide/engine';
+import type { Guide } from '@pr-play/engine';
 import type { GuideStore } from './store';
 
 interface Deps {

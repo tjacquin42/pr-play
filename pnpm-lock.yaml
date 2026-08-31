@@ -10,7 +10,7 @@ importers:
 
   packages/daemon:
     dependencies:
-      '@pr-guide/engine':
+      '@pr-play/engine':
         specifier: workspace:*
         version: link:../engine
     devDependencies:
@@ -48,7 +48,7 @@ importers:
 
   packages/extension:
     dependencies:
-      '@pr-guide/engine':
+      '@pr-play/engine':
         specifier: workspace:*
         version: link:../engine
     devDependencies:

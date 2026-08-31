@@ -1,4 +1,4 @@
-# pr-guide
+# pr-play
 
 Guide de lecture automatique pour les pull requests GitHub : un démon local analyse une PR
 (symboles modifiés, tests en vis-à-vis, appelants impactés) et une extension Chrome affiche
@@ -23,24 +23,24 @@ scripts/install-daemon.sh
 ```
 
 Ce script :
-1. build `@pr-guide/daemon` (le build produit `packages/daemon/dist/index.cjs`) ;
-2. écrit un `launchd` plist (`~/Library/LaunchAgents/com.tjacquin.pr-guide.plist`) qui lance
+1. build `@pr-play/daemon` (le build produit `packages/daemon/dist/index.cjs`) ;
+2. écrit un `launchd` plist (`~/Library/LaunchAgents/com.tjacquin.pr-play.plist`) qui lance
    `node packages/daemon/dist/index.cjs` au démarrage de session et le relance s'il crashe ;
 3. recharge l'agent (`launchctl bootout` puis `bootstrap`).
 
-Logs : `/tmp/pr-guide.log` (stdout) et `/tmp/pr-guide.err` (stderr).
+Logs : `/tmp/pr-play.log` (stdout) et `/tmp/pr-play.err` (stderr).
 
 Pour arrêter le démon manuellement :
 
 ```bash
-launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.tjacquin.pr-guide.plist
+launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.tjacquin.pr-play.plist
 ```
 
 Pour le relancer, ré-exécuter `scripts/install-daemon.sh`.
 
 ## Installation de l'extension
 
-1. Builder l'extension : `pnpm -F @pr-guide/extension build` → produit `packages/extension/dist/`
+1. Builder l'extension : `pnpm -F @pr-play/extension build` → produit `packages/extension/dist/`
    (`content.js`, `background.js`, `manifest.json`, `panel.css`).
 2. Dans Chrome, ouvrir `chrome://extensions`.
 3. Activer le mode développeur.
@@ -59,7 +59,7 @@ Le démon expose 3 endpoints HTTP sur `http://127.0.0.1:7777` :
 
 ## Stockage et rétention des guides
 
-Les guides générés sont écrits en JSON dans `~/.pr-guide/guides`.
+Les guides générés sont écrits en JSON dans `~/.pr-play/guides`.
 
 Le démon purge automatiquement (au démarrage, puis toutes les 24 h) les guides dont la PR
 associée est mergée depuis plus de **30 jours**, ainsi que les guides orphelins (PR ou repo
@@ -75,4 +75,4 @@ la main, démon lancé :
 3. Clic → « Analyse en cours… » → le panneau s'affiche avec chapitres, badges, tests en vis-à-vis, appelants.
 4. Clic sur « ✕ Fermer le guide » → la PR d'origine est intacte.
 5. Recharger la page, re-cliquer → le guide s'affiche immédiatement (cache).
-6. Arrêter le démon (`launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.tjacquin.pr-guide.plist`) → recharger → le bouton affiche « Guide hors ligne », la page GitHub reste intacte. Relancer le démon ensuite.
+6. Arrêter le démon (`launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.tjacquin.pr-play.plist`) → recharger → le bouton affiche « Guide hors ligne », la page GitHub reste intacte. Relancer le démon ensuite.

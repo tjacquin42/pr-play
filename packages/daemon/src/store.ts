@@ -1,6 +1,6 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { validateGuide, type Guide } from '@pr-guide/engine';
+import { validateGuide, type Guide } from '@pr-play/engine';
 
 export class GuideStore {
   constructor(private readonly dir: string) {}

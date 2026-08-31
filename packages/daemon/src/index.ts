@@ -5,16 +5,16 @@ import { cleanupOnce } from './cleanup';
 import { createServer } from './server';
 import { GuideStore } from './store';
 
-const store = new GuideStore(join(homedir(), '.pr-guide', 'guides'));
+const store = new GuideStore(join(homedir(), '.pr-play', 'guides'));
 const server = createServer({ store, analyze: (o, r, n) => analyzePr(o, r, n) });
 
 server.listen(7777, '127.0.0.1', () => {
-  console.log('pr-guide : démon prêt sur http://127.0.0.1:7777');
+  console.log('pr-play : démon prêt sur http://127.0.0.1:7777');
 });
 
 const runCleanup = (): void => {
   void cleanupOnce(store, new Date()).then((removed) => {
-    if (removed.length > 0) console.log(`pr-guide : purge de ${removed.join(', ')}`);
+    if (removed.length > 0) console.log(`pr-play : purge de ${removed.join(', ')}`);
   });
 };
 runCleanup();

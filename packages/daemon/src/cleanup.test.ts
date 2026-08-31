@@ -2,11 +2,11 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import type { Guide } from '@pr-guide/engine';
+import type { Guide } from '@pr-play/engine';
 import { GuideStore } from './store';
 import { cleanupOnce } from './cleanup';
 
-const dir = mkdtempSync(join(tmpdir(), 'pr-guide-clean-'));
+const dir = mkdtempSync(join(tmpdir(), 'pr-play-clean-'));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 function g(number: number): Guide {

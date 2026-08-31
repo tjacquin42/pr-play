@@ -1,4 +1,4 @@
-import { validateGuide, type Guide } from '@pr-guide/engine/types';
+import { validateGuide, type Guide } from '@pr-play/engine/types';
 import { daemonStatus, fetchGuide, requestAnalyze } from './api';
 import { renderGuide } from './panel';
 

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PR Guide",
+  "name": "PR Play",
   "version": "0.1.0",
   "description": "Guide de lecture des pull requests : symboles, tests en vis-à-vis, appelants.",
   "host_permissions": ["http://127.0.0.1:7777/*"],

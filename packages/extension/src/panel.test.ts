@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Guide } from '@pr-guide/engine/types';
+import type { Guide } from '@pr-play/engine/types';
 import { renderGuide } from './panel';
 
 const guide: Guide = {

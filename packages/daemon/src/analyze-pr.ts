@@ -1,7 +1,7 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { analyze, type ClaudeRunner, type Guide } from '@pr-play/engine';
+import { analyze, makeClaudeRunner, type ClaudeRunner, type Guide } from '@pr-play/engine';
 import { clonePrHead, prDiff, prView, realExec, type Exec } from './github';
 
 export interface AnalyzeDeps {
@@ -11,6 +11,7 @@ export interface AnalyzeDeps {
 
 export async function analyzePr(owner: string, repo: string, number: number, deps: AnalyzeDeps = {}): Promise<Guide> {
   const exec = deps.exec ?? realExec;
+  const runClaude = deps.runClaude ?? makeClaudeRunner(`Daemon: pr-play ${repo}#${number}`);
   const meta = await prView(owner, repo, number, exec);
   const diff = await prDiff(owner, repo, number, exec);
   const dir = await mkdtemp(join(tmpdir(), 'pr-play-clone-'));
@@ -25,7 +26,7 @@ export async function analyzePr(owner: string, repo: string, number: number, dep
       title: meta.title,
       url: meta.url,
       generatedAt: new Date().toISOString(),
-      runClaude: deps.runClaude,
+      runClaude,
     });
   } finally {
     await rm(dir, { recursive: true, force: true });

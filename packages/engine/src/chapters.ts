@@ -1,19 +1,33 @@
 import { execFile } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { promisify } from 'node:util';
 import { classifyLayer, LAYER_ORDER } from './ordering';
+import { claudeArgs, discardSession } from './session';
 import type { Chapter, Layer, SymbolEntry } from './types';
 
 const execFileAsync = promisify(execFile);
 
 export type ClaudeRunner = (prompt: string) => Promise<string>;
 
-export const runClaudeCli: ClaudeRunner = async (prompt) => {
-  const { stdout } = await execFileAsync('claude', ['-p', prompt], {
-    maxBuffer: 4 * 1024 * 1024,
-    timeout: 180_000,
-  });
-  return stdout;
-};
+/**
+ * Un runner qui se présente sous `name` le temps de son passage, puis ne laisse
+ * rien derrière lui. La session n'est effacée qu'en cas de succès : quand
+ * l'appel échoue, `buildChapters` se replie en silence sur le découpage par
+ * couches, et le transcript est alors la seule chose qui dise pourquoi.
+ */
+export function makeClaudeRunner(name: string): ClaudeRunner {
+  return async (prompt) => {
+    const sessionId = randomUUID();
+    const { stdout } = await execFileAsync('claude', claudeArgs(prompt, sessionId, name), {
+      maxBuffer: 4 * 1024 * 1024,
+      timeout: 180_000,
+    });
+    await discardSession(sessionId);
+    return stdout;
+  };
+}
+
+export const runClaudeCli: ClaudeRunner = makeClaudeRunner('Daemon: pr-play');
 
 const LAYER_TITLES: Record<Layer, string> = {
   types: 'Types et schémas', server: 'Logique serveur', api: 'API',

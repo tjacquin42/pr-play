@@ -9,19 +9,29 @@ function prFromUrl(): { owner: string; repo: string; number: number } | undefine
 }
 
 let panel: HTMLElement | undefined;
+let host: HTMLElement | undefined;
+let bar: HTMLElement | undefined;
 let currentPr: { owner: string; repo: string; number: number } | undefined;
 
 function closePanel(): void {
   if (!panel) return;
   panel.remove();
   panel = undefined;
+  // La PR d'origine réapparaît telle quelle : on n'a fait que la masquer.
+  host?.classList.remove('prg-guide-open');
   setAction('📖 Guide');
 }
 
 function openPanel(guide: Guide): void {
   closePanel();
   panel = renderGuide(guide, document);
-  document.body.appendChild(panel);
+  // Le guide prend la place de la PR, juste sous la console, sans la détruire.
+  if (bar && host) {
+    bar.insertAdjacentElement('afterend', panel);
+    host.classList.add('prg-guide-open');
+  } else {
+    document.body.appendChild(panel);
+  }
   setAction('✕ Fermer le guide');
   const untested = guide.symbols.filter((s) => s.testStatus === 'untested').length;
   const code = guide.symbols.filter((s) => s.testStatus !== 'is-test').length;
@@ -81,7 +91,9 @@ async function init(): Promise<void> {
   const pr = prFromUrl();
   if (!pr) return;
   currentPr = pr;
-  mountConsole(document, () => { void onAction(); });
+  const mounted = mountConsole(document, () => { void onAction(); });
+  bar = mounted.bar;
+  host = mounted.host;
   log('info', `PR ${pr.owner}/${pr.repo}#${pr.number}`);
   const alive = await daemonStatus();
   setStatus(alive ? 'démon prêt' : 'démon hors ligne');

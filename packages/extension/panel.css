@@ -1,5 +1,5 @@
-.prg-panel { position: fixed; inset: var(--prg-console-h, 36px) 0 0 0; z-index: 9999; display: flex; overflow: auto; background: #fff; color: #1f2328; font: 13px/1.5 -apple-system, sans-serif; }
-.prg-nav { width: 240px; flex-shrink: 0; padding: 16px; border-right: 1px solid #d1d9e0; position: sticky; top: 0; align-self: flex-start; }
+.prg-panel { display: flex; align-items: flex-start; gap: 0; background: #fff; color: #1f2328; font: 13px/1.5 -apple-system, sans-serif; border: 1px solid #d1d9e0; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+.prg-nav { width: 240px; flex-shrink: 0; padding: 16px; border-right: 1px solid #d1d9e0; position: sticky; top: 60px; max-height: calc(100vh - 80px); overflow: auto; }
 .prg-nav-item { display: block; padding: 6px 8px; color: inherit; text-decoration: none; border-radius: 6px; }
 .prg-nav-item:hover { background: #f6f8fa; }
 .prg-body { flex: 1; padding: 16px 24px; min-width: 0; }
@@ -49,9 +49,11 @@
 .prg-noise-file { font-family: monospace; padding: 2px 8px; }
 
 /* Console fixe en haut de la page de PR : état, action, journal copiable. */
-:root.prg-console-on { --prg-console-h: 36px; }
-:root.prg-console-on body { padding-top: var(--prg-console-h); }
-.prg-console { position: fixed; top: 0; left: 0; right: 0; z-index: 10001; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 12px; box-sizing: border-box; min-height: var(--prg-console-h, 36px); background: #1f2328; color: #f6f8fa; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+/* Le guide remplace la PR le temps de la lecture : rien n'est détruit, la
+   console et le panneau restent les seuls enfants visibles de l'hôte. */
+.prg-guide-open > *:not(.prg-console):not(.prg-panel) { display: none !important; }
+.prg-console { position: relative; z-index: 10; margin: 8px 0 0; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 12px; box-sizing: border-box; min-height: 36px; background: #1f2328; color: #f6f8fa; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.prg-console-floating { position: fixed; top: 0; left: 0; right: 0; z-index: 10001; margin: 0; border-radius: 0; }
 .prg-console-brand { font-weight: 700; letter-spacing: .04em; }
 .prg-console-status { flex: 1; min-width: 120px; color: #9198a1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .prg-console-action, .prg-console-btn { font: inherit; padding: 3px 10px; border-radius: 6px; border: 1px solid #3d444d; background: #2a313c; color: #f6f8fa; cursor: pointer; }

@@ -80,8 +80,39 @@ async function copyLog(): Promise<void> {
   setTimeout(() => { if (copyButton) copyButton.textContent = 'Copier le journal'; }, 3000);
 }
 
-/** Monte la barre fixe en haut de la page et renvoie son élément racine. */
-export function mountConsole(doc: Document, onAction: () => void): HTMLElement {
+/**
+ * Sélecteurs du bloc de titre d'une PR, du plus précis au plus large.
+ *
+ * GitHub fait cohabiter plusieurs générations de gabarits : on essaie chacune
+ * plutôt que de parier sur une seule, et on retombe sur le haut du contenu
+ * principal si aucune ne répond.
+ */
+const TITLE_ANCHORS = [
+  '#partial-discussion-header',
+  '[data-testid="issue-header"]',
+  '[data-component="PH_Title"]',
+  '.gh-header-show',
+  '.gh-header',
+  'h1.gh-header-title',
+];
+
+function findAnchor(doc: Document): { anchor: Element; selector: string } | undefined {
+  for (const selector of TITLE_ANCHORS) {
+    const found = doc.querySelector(selector);
+    // On vise le bloc de titre entier, pas un morceau imbriqué dedans.
+    if (found) return { anchor: found.closest('[data-testid="issue-header"]') ?? found, selector };
+  }
+  const main = doc.querySelector('main')?.firstElementChild;
+  return main ? { anchor: main, selector: 'main > *' } : undefined;
+}
+
+/**
+ * Insère la barre dans le flux de la page, juste au-dessus du titre de la PR.
+ *
+ * Renvoie l'élément hôte : le parent qui contient désormais la barre, et où le
+ * panneau viendra se poser à sa suite.
+ */
+export function mountConsole(doc: Document, onAction: () => void): { bar: HTMLElement; host: HTMLElement } {
   unmountConsole();
   bar = el(doc, 'div', 'prg-console');
 
@@ -110,12 +141,21 @@ export function mountConsole(doc: Document, onAction: () => void): HTMLElement {
   for (const entry of entries) listEl.appendChild(renderEntry(doc, entry));
   bar.appendChild(listEl);
 
-  doc.body.appendChild(bar);
-  doc.documentElement.classList.add('prg-console-on');
-  return bar;
+  const placement = findAnchor(doc);
+  if (placement) {
+    placement.anchor.parentElement?.insertBefore(bar, placement.anchor);
+    log('info', `console posée avant ${placement.selector}`);
+  } else {
+    // Aucun repère reconnu : la barre reste utilisable, épinglée en haut.
+    bar.classList.add('prg-console-floating');
+    doc.body.appendChild(bar);
+    log('warn', 'titre de PR introuvable — console épinglée en haut de la fenêtre');
+  }
+  return { bar, host: bar.parentElement ?? doc.body };
 }
 
 export function unmountConsole(): void {
+  bar?.parentElement?.classList.remove('prg-guide-open');
   bar?.remove();
   bar = undefined;
   statusEl = undefined;

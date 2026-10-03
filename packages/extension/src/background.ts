@@ -1,3 +1,8 @@
+// Fait de ce fichier un module ES (requis par `import('./background')` dans
+// les tests) : sans aucun import/export, TypeScript le traitait comme un
+// script global. N'a aucun effet sur le bundle esbuild (entrée autonome).
+export {};
+
 interface BridgeRequest { path: string; init?: { method?: string; body?: string } }
 interface BridgeResponse { ok: boolean; status: number; body: unknown }
 

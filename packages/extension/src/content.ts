@@ -3,7 +3,10 @@ import { daemonStatus, fetchGuide, requestAnalyze } from './api';
 import { captureGlobalErrors, log, mountConsole, setAction, setStatus, unmountConsole } from './console';
 import { renderGuide } from './panel';
 
-function prFromUrl(): { owner: string; repo: string; number: number } | undefined {
+// Fonctions exportées pour être appelées directement depuis les tests : le
+// script n'a pas d'autre point d'entrée que les écouteurs posés en bas de ce
+// fichier (événements DOM, navigation), inexploitables tels quels en test.
+export function prFromUrl(): { owner: string; repo: string; number: number } | undefined {
   const m = location.pathname.match(/^\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
   return m ? { owner: m[1]!, repo: m[2]!, number: Number(m[3]!) } : undefined;
 }
@@ -13,7 +16,7 @@ let host: HTMLElement | undefined;
 let bar: HTMLElement | undefined;
 let currentPr: { owner: string; repo: string; number: number } | undefined;
 
-function closePanel(): void {
+export function closePanel(): void {
   if (!panel) return;
   panel.remove();
   panel = undefined;
@@ -22,7 +25,7 @@ function closePanel(): void {
   setAction('📖 Guide');
 }
 
-function openPanel(guide: Guide): void {
+export function openPanel(guide: Guide): void {
   closePanel();
   panel = renderGuide(guide, document);
   // Le guide prend la place de la PR, juste sous la console, sans la détruire.
@@ -38,7 +41,7 @@ function openPanel(guide: Guide): void {
   setStatus(`${guide.chapters.length} chapitres · ${code} symboles de code · ${untested} non testés`);
 }
 
-async function pollGuide(owner: string, repo: string, number: number): Promise<void> {
+export async function pollGuide(owner: string, repo: string, number: number): Promise<void> {
   for (let i = 0; i < 120; i += 1) {
     const { status, body } = await fetchGuide(owner, repo, number);
     if (status === 200 && validateGuide(body)) { openPanel(body); return; }
@@ -68,7 +71,7 @@ async function pollGuide(owner: string, repo: string, number: number): Promise<v
   log('error', 'analyse toujours en cours après 4 minutes');
 }
 
-async function onAction(): Promise<void> {
+export async function onAction(): Promise<void> {
   const pr = prFromUrl();
   if (!pr) return;
   if (panel) { closePanel(); setStatus('guide fermé'); return; }
@@ -87,7 +90,7 @@ async function onAction(): Promise<void> {
   await pollGuide(pr.owner, pr.repo, pr.number);
 }
 
-async function init(): Promise<void> {
+export async function init(): Promise<void> {
   const pr = prFromUrl();
   if (!pr) return;
   currentPr = pr;
@@ -100,7 +103,7 @@ async function init(): Promise<void> {
   if (!alive) log('error', 'démon injoignable sur http://127.0.0.1:7777 au chargement');
 }
 
-function handleNavigation(): void {
+export function handleNavigation(): void {
   const pr = prFromUrl();
   if (!pr) {
     closePanel();

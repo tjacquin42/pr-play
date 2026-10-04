@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { captureGlobalErrors, log, logText, mountConsole, setAction, setStatus, unmountConsole } from './console';
 
 describe('console de l’extension', () => {
@@ -70,5 +70,66 @@ describe('console de l’extension', () => {
     mountConsole(document, () => {});
     unmountConsole();
     expect(document.querySelector('.prg-console')).toBeNull();
+  });
+
+  it('déplie/replie le journal via le bouton Journal', () => {
+    const { bar } = mountConsole(document, () => {});
+    const list = bar.querySelector('.prg-log') as HTMLElement;
+    const journalBtn = bar.querySelectorAll('.prg-console-btn')[0] as HTMLButtonElement;
+    expect(list.hidden).toBe(true);
+    journalBtn.click();
+    expect(list.hidden).toBe(false);
+    journalBtn.click();
+    expect(list.hidden).toBe(true);
+  });
+
+  describe('copie du journal', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('copie dans le presse-papier puis restaure le libellé après 3 secondes', async () => {
+      vi.useFakeTimers();
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+      const { bar } = mountConsole(document, () => {});
+      const copyBtn = bar.querySelectorAll('.prg-console-btn')[1] as HTMLButtonElement;
+      copyBtn.click();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(writeText).toHaveBeenCalledWith(logText());
+      expect(copyBtn.textContent).toBe('Copié ✓');
+      await vi.advanceTimersByTimeAsync(3000);
+      expect(copyBtn.textContent).toBe('Copier le journal');
+    });
+
+    it('retombe sur une sélection manuelle si le presse-papier refuse la copie', async () => {
+      const writeText = vi.fn().mockRejectedValue(new Error('refusé'));
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+      const { bar } = mountConsole(document, () => {});
+      const copyBtn = bar.querySelectorAll('.prg-console-btn')[1] as HTMLButtonElement;
+      copyBtn.click();
+      await vi.waitFor(() => expect(copyBtn.textContent).toBe('Copie auto refusée — ⌘C'));
+      expect(bar.querySelector('.prg-log-fallback')).not.toBeNull();
+    });
+  });
+
+  it('capture aussi les rejets de promesse non gérés, avec ou sans Error', () => {
+    // jsdom n'implémente pas PromiseRejectionEvent : un Event standard avec
+    // `reason`/`promise` greffés suffit, seuls ces champs sont lus par le code.
+    interface FakeRejectionEvent extends Event { reason: unknown; promise: Promise<unknown> }
+    function rejectionEvent(reason: unknown, promise: Promise<unknown>): FakeRejectionEvent {
+      const event = new Event('unhandledrejection') as FakeRejectionEvent;
+      event.reason = reason;
+      event.promise = promise;
+      return event;
+    }
+
+    mountConsole(document, () => {});
+    captureGlobalErrors(window);
+    const handled = Promise.reject(new Error('boum')).catch(() => {}); // évite un vrai rejet non géré dans ce test
+    window.dispatchEvent(rejectionEvent(new Error('boum'), handled));
+    expect(logText()).toContain('promesse rejetée : boum');
+    window.dispatchEvent(rejectionEvent('texte brut', Promise.resolve()));
+    expect(logText()).toContain('promesse rejetée : texte brut');
   });
 });

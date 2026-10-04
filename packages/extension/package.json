@@ -5,11 +5,18 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "build": "esbuild src/content.ts src/background.ts --bundle --format=iife --outdir=dist && cp manifest.json panel.css dist/"
+    "build": "esbuild src/content.ts src/background.ts --bundle --format=iife --outdir=dist && cp manifest.json panel.css dist/",
+    "test:coverage": "vitest run --coverage"
   },
-  "dependencies": { "@pr-play/engine": "workspace:*" },
+  "dependencies": {
+    "@pr-play/engine": "workspace:*"
+  },
   "devDependencies": {
-    "@types/chrome": "^0.0.280", "esbuild": "^0.24.0", "jsdom": "^25.0.0",
-    "typescript": "^5.6.0", "vitest": "^2.1.0"
+    "@types/chrome": "^0.0.280",
+    "@vitest/coverage-v8": "2.1.9",
+    "esbuild": "^0.24.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
   }
 }

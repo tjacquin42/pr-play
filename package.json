@@ -1,6 +1,6 @@
 {
   "name": "pr-play",
   "private": true,
-  "scripts": { "test": "pnpm -r test", "typecheck": "pnpm -r typecheck" },
+  "scripts": { "test": "pnpm -r test", "typecheck": "pnpm -r typecheck", "test:coverage": "pnpm -r --workspace-concurrency=1 test:coverage" },
   "packageManager": "pnpm@9.12.0"
 }

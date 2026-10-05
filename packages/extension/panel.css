@@ -1,0 +1,68 @@
+.prg-panel { display: flex; align-items: flex-start; gap: 0; background: #fff; color: #1f2328; font: 13px/1.5 -apple-system, sans-serif; border: 1px solid #d1d9e0; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+.prg-nav { width: 240px; flex-shrink: 0; padding: 16px; border-right: 1px solid #d1d9e0; position: sticky; top: 60px; max-height: calc(100vh - 80px); overflow: auto; }
+.prg-nav-item { display: block; padding: 6px 8px; color: inherit; text-decoration: none; border-radius: 6px; }
+.prg-nav-item:hover { background: #f6f8fa; }
+.prg-body { flex: 1; padding: 16px 24px; min-width: 0; }
+.prg-chapter-title { margin: 24px 0 4px; font-size: 18px; }
+.prg-chapter-intent { color: #59636e; margin: 0 0 12px; }
+.prg-symbol { border: 1px solid #d1d9e0; border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+.prg-symbol-header { display: flex; gap: 10px; align-items: center; padding: 8px 12px; background: #f6f8fa; border-bottom: 1px solid #d1d9e0; }
+.prg-symbol-file { color: #59636e; font-family: monospace; font-size: 12px; }
+.prg-badge { padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.prg-badge-tested-in-pr { background: #dafbe1; color: #116329; }
+.prg-badge-tested-elsewhere { background: #fff8c5; color: #7d4e00; }
+.prg-badge-untested { background: #ffebe9; color: #a40e26; }
+.prg-badge-is-test { background: #ddf4ff; color: #0550ae; }
+.prg-pr-link { margin-left: auto; font-size: 12px; }
+.prg-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.prg-columns-single { grid-template-columns: 1fr; }
+.prg-columns-single .prg-code { border-right: none; }
+.prg-code { border-right: 1px solid #30363d; min-width: 0; background: #1f2430; }
+.prg-test { min-width: 0; }
+.prg-test { background: #1f2430; }
+.prg-col-head { display: flex; align-items: baseline; gap: 8px; padding: 4px 10px; background: #161b22; border-bottom: 1px solid #30363d; }
+.prg-col-title { font: 600 11px/1.4 -apple-system, sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #f0f6fc; }
+.prg-col-file { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prg-test-note { padding: 12px; color: #8b949e; font-style: italic; background: #1f2430; }
+.prg-test-missing { padding: 12px; color: #f85149; font-weight: 600; background: #1f2430; }
+.prg-diff { margin: 0; padding: 8px 0; overflow-x: auto; font-size: 12px; background: #1f2430; color: #d4d4d4; }
+.prg-line { padding: 0 8px; white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.prg-line-add { background: rgba(63, 185, 80, .18); box-shadow: inset 2px 0 0 #3fb950; }
+.prg-line-del { background: rgba(248, 81, 73, .16); box-shadow: inset 2px 0 0 #f85149; }
+.prg-marker { display: inline-block; width: 1ch; margin-right: 6px; color: #6e7681; }
+.prg-line-add .prg-marker { color: #3fb950; }
+.prg-line-del .prg-marker { color: #f85149; }
+
+/* Jetons — thème Dark+ de VS Code. */
+.prg-t-comment { color: #6a9955; font-style: italic; }
+.prg-t-string { color: #ce9178; }
+.prg-t-keyword { color: #569cd6; }
+.prg-t-control { color: #c586c0; }
+.prg-t-number { color: #b5cea8; }
+.prg-t-type { color: #4ec9b0; }
+.prg-t-function { color: #dcdcaa; }
+.prg-t-property { color: #9cdcfe; }
+.prg-t-operator { color: #d4d4d4; }
+.prg-t-plain { color: #d4d4d4; }
+.prg-callers { padding: 8px 12px; border-top: 1px solid #d1d9e0; background: #fff8c5; font-size: 12px; }
+.prg-noise { margin-top: 24px; color: #59636e; }
+.prg-noise-file { font-family: monospace; padding: 2px 8px; }
+
+/* Console fixe en haut de la page de PR : état, action, journal copiable. */
+/* Le guide remplace la PR le temps de la lecture : rien n'est détruit, la
+   console et le panneau restent les seuls enfants visibles de l'hôte. */
+.prg-guide-open > *:not(.prg-console):not(.prg-panel) { display: none !important; }
+.prg-console { position: relative; z-index: 10; margin: 8px 0 0; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 12px; box-sizing: border-box; min-height: 36px; background: #1f2328; color: #f6f8fa; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.prg-console-floating { position: fixed; top: 0; left: 0; right: 0; z-index: 10001; margin: 0; border-radius: 0; }
+.prg-console-brand { font-weight: 700; letter-spacing: .04em; }
+.prg-console-status { flex: 1; min-width: 120px; color: #9198a1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prg-console-action, .prg-console-btn { font: inherit; padding: 3px 10px; border-radius: 6px; border: 1px solid #3d444d; background: #2a313c; color: #f6f8fa; cursor: pointer; }
+.prg-console-action { background: #238636; border-color: #2ea043; font-weight: 600; }
+.prg-console-action:disabled { background: #2a313c; border-color: #3d444d; color: #9198a1; cursor: default; }
+.prg-console-btn:hover, .prg-console-action:not(:disabled):hover { filter: brightness(1.15); }
+.prg-log { flex-basis: 100%; max-height: 180px; overflow: auto; margin-top: 4px; border-top: 1px solid #3d444d; padding-top: 4px; }
+.prg-log-line { display: flex; gap: 8px; padding: 1px 0; white-space: pre-wrap; word-break: break-word; }
+.prg-log-time { color: #9198a1; flex-shrink: 0; }
+.prg-log-error .prg-log-msg { color: #ff8182; }
+.prg-log-warn .prg-log-msg { color: #d29922; }
+.prg-log-fallback { width: 100%; height: 90px; margin-top: 6px; font: inherit; background: #0d1117; color: #f6f8fa; border: 1px solid #3d444d; border-radius: 6px; }

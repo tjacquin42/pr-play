@@ -1,5 +1,5 @@
 export type Layer = 'types' | 'server' | 'api' | 'ui' | 'tests' | 'other';
-export type TestStatus = 'tested-in-pr' | 'tested-elsewhere' | 'untested';
+export type TestStatus = 'tested-in-pr' | 'tested-elsewhere' | 'untested' | 'is-test';
 export type SymbolKind = 'function' | 'component' | 'class' | 'type' | 'variable' | 'file';
 
 export interface Caller { file: string; line: number; symbol: string }
